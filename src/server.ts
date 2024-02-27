@@ -1,6 +1,8 @@
 import express from 'express';
 import router from './routes/routes';
 import MongoDB from './config/database/mongodb.config';
+import cors from 'cors';
+
 class Server {
     private port: number;
     private app: express.Application;
@@ -33,6 +35,7 @@ class Server {
     // Método para configurar la seguridad
     private configureSecurity() {
         this.app.use(express.json(), express.urlencoded({ extended: true }));
+        this.app.use(cors({ origin: 'http://localhost:3000' })); // Configura CORS para localhost:3000
         // Configura la seguridad aquí
     }
 
