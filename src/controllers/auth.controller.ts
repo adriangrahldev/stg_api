@@ -46,11 +46,18 @@ class AuthController {
         if (!validPassword) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
-
+        const userObj = {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            permissions: user.permissions
+        };
         // Genera un token JWT
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || 'STG_SECRET_KEY_123');
 
-        return res.header('auth-token', token).json({ message: 'Logged in successfully', token });
+        return res.header('auth-token', token).json({ message: 'Logged in successfully', token, user: userObj});
     }
 }
 
