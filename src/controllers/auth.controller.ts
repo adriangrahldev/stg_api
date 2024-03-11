@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User, { IUser } from '../models/user.model';
+import User from '../models/user.model';
+import { IUser } from '../interfaces/user.interface';
 
 class AuthController {
     public async register(req: Request, res: Response) {
@@ -18,7 +19,7 @@ class AuthController {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Crea un nuevo usuario
-        const newUser: IUser = new User({
+        const newUser = new User({
             firstName,
             lastName,
             email,
@@ -27,10 +28,15 @@ class AuthController {
             permissions
         });
         await newUser.save();
-        const userObject = newUser.toObject();
-        delete userObject.password;
 
-        return res.status(201).json({ message: 'User registered successfully', user: userObject });
+        return res.status(201).json({ message: 'User registered successfully', user: {
+            _id: newUser._id,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            role: newUser.role,
+            permissions: newUser.permissions
+        } });
     }
     public async login(req: Request, res: Response): Promise<Response> {
         const { email, password } = req.body;

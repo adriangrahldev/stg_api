@@ -1,6 +1,6 @@
-import User, { IUser } from '../models/user.model';
-import { Request, Response } from 'express';
-import { RequestWithUser } from '../middlewares/jwt.middleware';
+import { IUser } from '../interfaces/user.interface';
+import User from '../models/user.model';
+import { Response } from 'express';
 
 class UserController {
 
@@ -14,9 +14,16 @@ class UserController {
         if (!user) {
             return res.status(401).json({ message: 'No autorizado' });
         }
-        const userObject = user.toObject();
-        delete userObject.password;
-        return res.status(200).json(userObject);
+        return res.status(200).json({
+            user: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                permissions: user.permissions
+            }
+        });
     }
 }
 
